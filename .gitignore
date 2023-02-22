@@ -1,3 +1,13 @@
+# grain array data
+grain_arrays
+grain_arrays/*
+
+test_data
+test_data/*
+
+test_dest_dir
+test_dest_dir/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
