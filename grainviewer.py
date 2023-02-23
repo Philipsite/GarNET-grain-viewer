@@ -1,11 +1,9 @@
-# %%
 import cv2
 import shutil
 import numpy as np
 from pathlib import Path
 
 
-# %%
 class GrainArrayImport:
     def __init__(self, arr_dir: str, destination_dir: str, working_dir: str = ".") -> None:
         self.path_array_dir = Path(working_dir, arr_dir)
@@ -29,8 +27,9 @@ class GrainArrayImport:
             Path(self.destination_dir, "classified_arrays.npy").unlink()
 
         # check for valid selection size
-        while selection_size > len(arrays_in_arr_dir):
-            selection_size = selection_size - 1
+        if selection_size > len(arrays_in_arr_dir):
+            while selection_size > len(arrays_in_arr_dir):
+                selection_size = selection_size - 1
             print("Chosen selction size parameter was too big. Reduced to the maximal possible size of {}".format(selection_size))
 
         # rnd generator for choosing a selection of grains to classify
@@ -74,10 +73,19 @@ class GrainArrayVisualiser:
 
 
 def main():
-    # arr_dir = input("path to arr_dir")
+    # SET wd
+    wd = input("INPUT: path to working directory: \n")
 
-    # check for dataset dir structur OR create it
-    destination = Path("test_dest_dir")
+    # SET grain array directory
+    in_arr_dir = input("INPUT: name of arr_dir <grain_arrays>: \n")
+    if in_arr_dir == "":
+        arr_dir = "grain_arrays"
+    else:
+        arr_dir = in_arr_dir
+
+    # SET destination directory
+    destination = input("INPUT: destination dataset name for labelled grains: \n")
+    destination = Path(wd, destination)
     destination_atoll = destination / "atoll"
     destination_intact = destination / "intact"
     destination_notGarnet = destination / "notGarnet"
@@ -91,8 +99,11 @@ def main():
     if not destination_notGarnet.exists():
         destination_notGarnet.mkdir()
 
-    grain_array = GrainArrayImport(arr_dir="grain_arrays", destination_dir="test_dest_dir")
-    grain_array.select_arrays(selection_size=5)
+    # SET selection size
+    selection_size = int(input("INPUT: number of grains to classify [int]: \n"))
+
+    grain_array = GrainArrayImport(arr_dir=arr_dir, destination_dir=destination, working_dir=wd)
+    grain_array.select_arrays(selection_size=selection_size)
 
     for arr_name in grain_array.array_selection:
         grain_array.load_array_into_memory(arr_name)
